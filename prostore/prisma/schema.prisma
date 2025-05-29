@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -15,33 +15,33 @@ datasource db {
 }
 
 model Product {
-  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
-  slug        String  @unique(map: "product_slug_idx")
+  slug        String   @unique(map: "product_slug_idx")
   category    String
   images      String[]
   brand       String
   description String
   stock       Int
-  price       Decimal @default(0) @db.Decimal(12, 2)
-  rating      Decimal @default(0) @db.Decimal(3, 2)
-  numReviews  Int     @default(0)
-  isFeatured  Boolean @default(false)
-  banner      String? 
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime  @default(now()) @updatedAt
+  price       Decimal  @default(0) @db.Decimal(12, 2)
+  rating      Decimal  @default(0) @db.Decimal(3, 2)
+  numReviews  Int      @default(0)
+  isFeatured  Boolean  @default(false)
+  banner      String?
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @updatedAt
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String    @default("NO_NAME")
   email         String?   @unique(map: "user_email_idx")
   emailVerified DateTime? @db.Timestamp(6)
   image         String?
   password      String?
   role          String    @default("user")
-  address       Json      @db.Json
-  paymentMethod String?   
+  address       Json?     @db.Json
+  paymentMethod String?
   createdAt     DateTime  @default(now()) @db.Timestamp(6)
   updatedAt     DateTime  @default(now()) @updatedAt
   account       Account[]
@@ -49,42 +49,42 @@ model User {
 }
 
 model Account {
-  userId             String  @id
-  type               String
-  provider           String
-  providerAccountId  String  
-  refresh_token      String?
-  access_token       String? 
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? 
-  session_state      String?
-  createdAt         DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime  @default(now()) @updatedAt
- 
+  userId            String   @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @default(now()) @updatedAt
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
-model Session { 
+model Session {
   sessionToken String   @id
-  userId       String
+  userId       String   @db.Uuid
   expires      DateTime @db.Timestamp(6)
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  createdAt    DateTime @default(now()) @db.Timestamp(6)
-  updatedAt    DateTime @default(now()) @updatedAt
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@map("sessions")
 }
 
 model VerificationToken {
-  identifier  String
-  token       String
-  expires     DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
   @@id([identifier, token])
 }
-
