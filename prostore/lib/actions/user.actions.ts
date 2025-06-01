@@ -12,12 +12,14 @@ export async function signInWithCredentials(prevState: unknown, formData: FormDa
             password: formData.get('password')
         });
 
+        console.log('user', user);
+
         await signIn('credentials',  user);
 
         return { success: true, message: 'Signed in successfully' }
 
     } catch (error) {
-        if (!isRedirectError(error)) {
+        if (isRedirectError(error)) {
             throw error;
         }
 
